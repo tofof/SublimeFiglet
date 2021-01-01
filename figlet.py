@@ -121,12 +121,16 @@ class FigletExampleCommand(sublime_plugin.WindowCommand):
     
     def on_done(self, text):
         view = self.window.active_view()
+        settings = sublime.load_settings("Preferences.sublime-settings")
+        original_font = settings.get('figlet_font', 'standard')
         for font in self.fonts:
             settings = sublime.load_settings("Preferences.sublime-settings")
             settings.set("figlet_font", font)
             sublime.save_settings("Preferences.sublime-settings")
             view.run_command('figlet_insert_font_name')
             view.run_command('figlet_insert_text', {'text': text})
+        settings.set("figlet_font", original_font)
+        sublime.save_settings("Preferences.sublime-settings")
 
 
 class FigletInsertFontName(sublime_plugin.TextCommand):
@@ -188,7 +192,7 @@ class FigletInsertTextCommand(sublime_plugin.TextCommand):
         tab = (len(view.line(cursor)) - text_length) * ' '
         text = '\n'.join((tab + line for line in text.split('\n')))
         text = text[len(tab):]
-
+        
         view.erase(edit, sel[0])
         view.insert(edit, cursor, text)
         sel.clear()
