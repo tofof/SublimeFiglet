@@ -106,6 +106,40 @@ class FigletTextCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         view.run_command('figlet_insert_text', {'text': text})
 
+        
+class FigletExampleCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        import pyfiglet
+        self.fonts = pyfiglet.FigletFont.getFonts()
+        view = self.window.active_view()
+        sel = view.sel()
+        if len(sel) == 1 and sel[0].size() > 0:
+            view.run_command('figlet_insert_text', {'text': None})
+        else:
+            self.window.show_input_panel("Text to Figletize in all fonts:", "",
+                                         self.on_done, None, None)
+    
+    def on_done(self, text):
+        view = self.window.active_view()
+        for font in self.fonts:
+            settings = sublime.load_settings("Preferences.sublime-settings")
+            settings.set("figlet_font", font)
+            sublime.save_settings("Preferences.sublime-settings")
+            view.run_command('figlet_insert_font_name')
+            view.run_command('figlet_insert_text', {'text': text})
+
+
+class FigletInsertFontName(sublime_plugin.TextCommand):
+    def run(self, edit):
+        settings = sublime.load_settings("Preferences.sublime-settings")
+        font = settings.get('figlet_font', 'standard')
+        sel=self.view.sel()
+        cursor = max(sel[0].a, sel[0].b)
+        sel.clear()
+        sel.add(sublime.Region(cursor, cursor))
+        self.view.insert(edit, self.view.sel()[0].begin(), "\n\n\n"+font+"\n")
+            
+
 
 class FigletCommentCommand(sublime_plugin.WindowCommand):
     def run(self):
