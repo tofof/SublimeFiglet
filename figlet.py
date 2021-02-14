@@ -106,7 +106,7 @@ class FigletTextCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         view.run_command('figlet_insert_text', {'text': text})
 
-        
+
 class FigletExampleCommand(sublime_plugin.WindowCommand):
     def run(self):
         import pyfiglet
@@ -118,7 +118,7 @@ class FigletExampleCommand(sublime_plugin.WindowCommand):
         else:
             self.window.show_input_panel("Text to Figletize in all fonts:", "",
                                          self.on_done, None, None)
-    
+
     def on_done(self, text):
         view = self.window.active_view()
         settings = sublime.load_settings("Preferences.sublime-settings")
@@ -142,7 +142,7 @@ class FigletInsertFontName(sublime_plugin.TextCommand):
         sel.clear()
         sel.add(sublime.Region(cursor, cursor))
         self.view.insert(edit, self.view.sel()[0].begin(), "\n\n\n"+font+"\n")
-            
+
 
 
 class FigletCommentCommand(sublime_plugin.WindowCommand):
@@ -192,7 +192,7 @@ class FigletInsertTextCommand(sublime_plugin.TextCommand):
         tab = (len(view.line(cursor)) - text_length) * ' '
         text = '\n'.join((tab + line for line in text.split('\n')))
         text = text[len(tab):]
-        
+
         view.erase(edit, sel[0])
         view.insert(edit, cursor, text)
         sel.clear()
